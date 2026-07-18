@@ -8,16 +8,28 @@ export const PLAYER_DEFS = [
     id: 0,
     name: 'Player 1',
     sprite: 'olive_green',
-    keys: { left: 'ArrowLeft', right: 'ArrowRight', shoot: 'Space' },
-    displayKeys: '← →  SPACE',
+    keys: {
+      left: 'ArrowLeft',
+      right: 'ArrowRight',
+      aimUp: 'ArrowUp',
+      aimDown: 'ArrowDown',
+      shoot: 'Space',
+    },
+    displayKeys: '← →  ↑ ↓ aim  SPACE',
     color: '#6db33f',
   },
   {
     id: 1,
     name: 'Player 2',
     sprite: 'olive_black',
-    keys: { left: 'KeyA', right: 'KeyD', shoot: 'KeyF' },
-    displayKeys: 'A D  F',
+    keys: {
+      left: 'KeyA',
+      right: 'KeyD',
+      aimUp: 'KeyW',
+      aimDown: 'KeyS',
+      shoot: 'KeyF',
+    },
+    displayKeys: 'A D  W S aim  F',
     color: '#3a2048',
   },
 ];
@@ -31,16 +43,35 @@ export const VEGGIE_TYPES = [
 
 const OLIVE_W = 48;
 const OLIVE_H = 54;
-const PIMENTO_W = 14;
-const PIMENTO_H = 12;
+const PIMENTO_W = 18;
+const PIMENTO_H = 16;
 const OLIVE_SPEED = 260;
-const PIMENTO_SPEED = 420;
-const SHOOT_COOLDOWN = 0.28;
+const PIMENTO_SPEED = 340;
+const SHOOT_COOLDOWN = 0.32;
+/** Max tilt from straight-up (degrees). 45° plays better for leading flyers. */
+export const MAX_AIM_DEG = 45;
+const AIM_RATE_DEG = 90; // deg/sec while holding up/down
 const FALL_GRAVITY = 520;
 const EXPLOSION_LIFE = 0.55;
 const EXPLOSION_RADIUS = 48;
 const BASE_SPAWN = 1.35;
 const MIN_SPAWN = 0.45;
+
+/** Aim angle in radians from straight up, signed toward facing (+ = right). */
+export function aimRadians(olive) {
+  return (olive.aimDeg * Math.PI) / 180 * olive.facing;
+}
+
+export function muzzlePoint(olive) {
+  const ang = aimRadians(olive);
+  const ox = olive.x + olive.w / 2;
+  const oy = olive.y + 8;
+  const len = olive.h * 0.35;
+  return {
+    x: ox + Math.sin(ang) * len,
+    y: oy - Math.cos(ang) * len,
+  };
+}
 
 function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
   return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
@@ -87,10 +118,14 @@ export class Game {
         h: OLIVE_H,
         vx: 0,
         facing: 1,
+        /** Degrees from straight-up toward facing (0..MAX_AIM_DEG). */
+        aimDeg: 0,
         shootCd: 0,
         alive: true,
         moveLeft: false,
         moveRight: false,
+        aimUp: false,
+        aimDown: false,
       });
     }
   }
@@ -108,9 +143,12 @@ export class Game {
     for (const o of this.olives) {
       o.alive = true;
       o.vx = 0;
+      o.aimDeg = 0;
       o.shootCd = 0;
       o.moveLeft = false;
       o.moveRight = false;
+      o.aimUp = false;
+      o.aimDown = false;
     }
   }
 
@@ -124,12 +162,16 @@ export class Game {
     if (this.phase !== 'playing' || this.paused || !olive.alive) return;
     if (olive.shootCd > 0) return;
     olive.shootCd = SHOOT_COOLDOWN;
+    const ang = aimRadians(olive);
+    const muzzle = muzzlePoint(olive);
     this.pimentos.push({
-      x: olive.x + olive.w / 2 - PIMENTO_W / 2,
-      y: olive.y - 4,
+      x: muzzle.x - PIMENTO_W / 2,
+      y: muzzle.y - PIMENTO_H / 2,
       w: PIMENTO_W,
       h: PIMENTO_H,
-      vy: -PIMENTO_SPEED,
+      vx: Math.sin(ang) * PIMENTO_SPEED,
+      vy: -Math.cos(ang) * PIMENTO_SPEED,
+      angle: ang,
       ownerId: olive.id,
     });
   }
@@ -138,11 +180,14 @@ export class Game {
     const type = VEGGIE_TYPES[(Math.random() * VEGGIE_TYPES.length) | 0];
     const difficulty = Math.min(1, this.elapsed / 90);
     const speed = 70 + Math.random() * 50 + difficulty * 80;
-    const minY = 36;
-    const maxY = GROUND_Y - 160;
-    const y = minY + Math.random() * (maxY - minY);
-    const bobAmp = 8 + Math.random() * 10;
-    const bobSpeed = 1.5 + Math.random() * 2;
+    // Wide altitude band so aiming matters: high sky passes down to near-olive flyovers.
+    const minY = 24;
+    const maxY = GROUND_Y - type.h - 70;
+    // Bias a bit toward mid/low lanes so angled shots stay useful, but still hit the high sky.
+    const t = Math.pow(Math.random(), 0.75);
+    const y = minY + t * (maxY - minY);
+    const bobAmp = 6 + Math.random() * 14;
+    const bobSpeed = 1.2 + Math.random() * 2.4;
     this.veggies.push({
       type: type.id,
       x: -type.w - 8,
@@ -179,13 +224,21 @@ export class Game {
       olive.x += olive.vx * dt;
       olive.x = Math.max(4, Math.min(CANVAS_W - olive.w - 4, olive.x));
       olive.y = GROUND_Y - olive.h;
+
+      if (olive.aimUp) olive.aimDeg -= AIM_RATE_DEG * dt;
+      if (olive.aimDown) olive.aimDeg += AIM_RATE_DEG * dt;
+      olive.aimDeg = Math.max(0, Math.min(MAX_AIM_DEG, olive.aimDeg));
+
       if (olive.shootCd > 0) olive.shootCd -= dt;
     }
 
     for (const p of this.pimentos) {
+      p.x += p.vx * dt;
       p.y += p.vy * dt;
     }
-    this.pimentos = this.pimentos.filter((p) => p.y + p.h > -20);
+    this.pimentos = this.pimentos.filter(
+      (p) => p.y + p.h > -30 && p.x + p.w > -30 && p.x < CANVAS_W + 30,
+    );
 
     const spawnInterval = Math.max(MIN_SPAWN, BASE_SPAWN - this.elapsed * 0.012 - this.score * 0.015);
     this.spawnTimer -= dt;

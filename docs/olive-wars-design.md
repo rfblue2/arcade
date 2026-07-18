@@ -23,19 +23,21 @@ Lobby → Setup → Playing → Game Over → Setup (Play Again)
 
 ## Controls
 
-| Slot | Left | Right | Shoot |
-|------|------|-------|-------|
-| P1 (green olive) | `←` | `→` | `Space` |
-| P2 (black olive) | `A` | `D` | `F` |
+| Slot | Left | Right | Aim up | Aim down | Shoot |
+|------|------|-------|--------|----------|-------|
+| P1 (green olive) | `←` | `→` | `↑` | `↓` | `Space` |
+| P2 (black olive) | `A` | `D` | `W` | `S` | `F` |
 
 Pause: `P`.
+
+Aim tilts from **straight up (0°)** toward the olive's facing direction, capped at **45°** (chosen over 30° for easier leading of flyers). Hold up/down to adjust; a dashed aim guide shows the current trajectory.
 
 ## Mechanics Detail
 
 - **Arena:** canvas **720×480** (4:3), ground strip along the bottom. Soft late-90s / early-2000s pre-rendered CG sprites (not hard pixel art, not smooth modern).
 - **Movement:** olives accelerate left/right with a max speed and stop at the canvas edges. They stay on the ground line.
-- **Shooting:** rate-limited pimento shots travel upward; removed off-screen or on hit.
-- **Veggie spawn:** timed spawns from the left edge; type randomized; altitude and speed vary; spawn rate and speed ramp gently with score/time.
+- **Aiming / shooting:** rate-limited pimentos launch along the aim vector (vx/vy from angle). Removed off-screen or on hit.
+- **Veggie spawn:** timed spawns from the left edge; type randomized; **altitude spans a wide band** (high sky to near-olive flyovers) so aiming matters; speed varies; spawn rate and speed ramp gently with score/time.
 - **Collision:** AABB hitboxes (slightly inset from sprite bounds). Pimento↔flying veggie → down. Falling veggie↔ground → explosion. Explosion radius vs olive hitbox → game over.
 - **Scoring:** +1 per veggie successfully shot (credited when the shot connects).
 

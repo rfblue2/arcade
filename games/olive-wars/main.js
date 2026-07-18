@@ -115,6 +115,8 @@ function onKeyDown(event) {
     if (!olive.alive) continue;
     if (event.code === olive.keys.left) olive.moveLeft = true;
     if (event.code === olive.keys.right) olive.moveRight = true;
+    if (event.code === olive.keys.aimUp) olive.aimUp = true;
+    if (event.code === olive.keys.aimDown) olive.aimDown = true;
     if (event.code === olive.keys.shoot) game.tryShoot(olive);
   }
 }
@@ -123,6 +125,8 @@ function onKeyUp(event) {
   for (const olive of game.olives) {
     if (event.code === olive.keys.left) olive.moveLeft = false;
     if (event.code === olive.keys.right) olive.moveRight = false;
+    if (event.code === olive.keys.aimUp) olive.aimUp = false;
+    if (event.code === olive.keys.aimDown) olive.aimDown = false;
   }
 }
 
@@ -155,9 +159,6 @@ async function init() {
 
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
-
-  // Prefetch drop-in music availability (non-blocking)
-  music.preferDropIn().catch(() => {});
 
   lastTimestamp = performance.now();
   // Draw idle backdrop on setup

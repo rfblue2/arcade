@@ -22,19 +22,24 @@ export class ChaseMusic {
     this._started = false;
   }
 
-  async preferDropIn() {
+  /**
+   * Try optional licensed drop-in once (no HEAD probing — avoids console 404 spam).
+   * Resolves true only if the element can start playback.
+   */
+  async _tryDropInPlay() {
     for (const path of DROP_IN_CANDIDATES) {
+      const el = new Audio(path);
+      el.loop = true;
+      el.volume = 0.55;
       try {
-        const res = await fetch(path, { method: 'HEAD' });
-        if (res.ok) {
-          this._audioEl = new Audio(path);
-          this._audioEl.loop = true;
-          this._audioEl.volume = 0.55;
-          this._mode = 'file';
-          return true;
-        }
+        // decode/play; if the file is missing, play() rejects without a prior HEAD
+        await el.play();
+        this._audioEl = el;
+        this._mode = 'file';
+        return true;
       } catch {
-        // ignore missing files
+        el.removeAttribute('src');
+        el.load();
       }
     }
     return false;
@@ -44,21 +49,14 @@ export class ChaseMusic {
     if (this._started || this.muted) return;
     this._started = true;
 
-    if (!this._audioEl) {
-      await this.preferDropIn();
+    // Prefer a licensed drop-in if present; otherwise original synth chase theme.
+    // (Yakety Sax itself cannot be shipped — copyrighted.)
+    if (await this._tryDropInPlay()) {
+      this.playing = true;
+      return;
     }
 
-    if (this._mode === 'file' && this._audioEl) {
-      try {
-        await this._audioEl.play();
-        this.playing = true;
-        return;
-      } catch {
-        // fall through to synth
-        this._mode = 'synth';
-      }
-    }
-
+    this._mode = 'synth';
     this._startSynth();
   }
 
@@ -96,10 +94,13 @@ export class ChaseMusic {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
     this.ctx = new AudioCtx();
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
     this.playing = true;
 
     const master = this.ctx.createGain();
-    master.gain.value = 0.18;
+    master.gain.value = 0.22;
     master.connect(this.ctx.destination);
     this._nodes.push(master);
 
