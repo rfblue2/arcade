@@ -37,13 +37,13 @@ Aim tilts from **straight up (0°)** toward the olive's facing direction, capped
 - **Arena:** canvas **720×480** (4:3), ground strip along the bottom. Soft late-90s / early-2000s pre-rendered CG sprites (not hard pixel art, not smooth modern).
 - **Movement:** olives accelerate left/right with a max speed and stop at the canvas edges. They stay on the ground line.
 - **Aiming / shooting:** rate-limited pimentos launch along the aim vector (vx/vy from angle). Removed off-screen or on hit.
-- **Veggie spawn:** timed spawns from the left edge; type randomized; **altitude spans a wide band** (high sky to near-olive flyovers) so aiming matters; speed varies; spawn rate and speed ramp gently with score/time.
+- **Veggie spawn:** timed spawns from the left edge; type randomized; **altitude spans a wide band** (high sky to near-olive flyovers) so aiming matters; veggies fly on a **straight horizontal path** (no bobbing); speed varies; spawn rate and speed ramp gently with score/time.
 - **Collision:** AABB hitboxes (slightly inset from sprite bounds). Pimento↔flying veggie → down. Falling veggie↔ground → explosion. Explosion radius vs olive hitbox → game over.
 - **Scoring:** +1 per veggie successfully shot (credited when the shot connects).
 
 ## Visual Style
 
-Late-90s / early-2000s **pre-rendered 3D clip-art** look: soft airbrushed shading, glossy highlights, slightly chunky, no nearest-neighbor pixel scaling. Sprites live in `sprites/`. Canvas uses normal (smooth-ish) image smoothing off just enough to keep edges a bit soft — not `image-rendering: pixelated`.
+Late-90s / early-2000s **pre-rendered 3D clip-art** look: soft airbrushed shading, glossy highlights, slightly chunky, no nearest-neighbor pixel scaling. Olive sprites are plain stuffed olives (**no eyes, arms, or faces**). Sprites live in `sprites/`. Canvas uses soft image smoothing — not `image-rendering: pixelated`.
 
 ## Audio
 

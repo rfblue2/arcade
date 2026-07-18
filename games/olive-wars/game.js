@@ -45,7 +45,7 @@ const OLIVE_W = 48;
 const OLIVE_H = 54;
 const PIMENTO_W = 18;
 const PIMENTO_H = 16;
-const OLIVE_SPEED = 260;
+const OLIVE_SPEED = 320;
 const PIMENTO_SPEED = 340;
 const SHOOT_COOLDOWN = 0.32;
 /** Max tilt from straight-up (degrees). 45° plays better for leading flyers. */
@@ -186,8 +186,6 @@ export class Game {
     // Bias a bit toward mid/low lanes so angled shots stay useful, but still hit the high sky.
     const t = Math.pow(Math.random(), 0.75);
     const y = minY + t * (maxY - minY);
-    const bobAmp = 6 + Math.random() * 14;
-    const bobSpeed = 1.2 + Math.random() * 2.4;
     this.veggies.push({
       type: type.id,
       x: -type.w - 8,
@@ -196,10 +194,6 @@ export class Game {
       h: type.h,
       vx: speed,
       vy: 0,
-      baseY: y,
-      bobAmp,
-      bobSpeed,
-      bobPhase: Math.random() * Math.PI * 2,
       falling: false,
       alive: true,
       points: type.points,
@@ -286,8 +280,6 @@ export class Game {
         }
       } else {
         v.x += v.vx * dt;
-        v.bobPhase += v.bobSpeed * dt;
-        v.y = v.baseY + Math.sin(v.bobPhase) * v.bobAmp;
         if (v.x > CANVAS_W + 40) {
           v.alive = false;
         }

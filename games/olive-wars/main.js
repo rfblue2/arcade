@@ -30,6 +30,7 @@ const dom = {
 const ctx = dom.canvas.getContext('2d');
 const game = new Game();
 const music = new ChaseMusic();
+const keysDown = new Set();
 let sprites = {};
 let lastTimestamp = 0;
 let rafId = 0;
@@ -69,6 +70,7 @@ function renderControlHints() {
 function showSetup() {
   game.phase = 'setup';
   music.stop();
+  keysDown.clear();
   dom.setupScreen.classList.remove('overlay--hidden');
   dom.pauseOverlay.classList.add('overlay--hidden');
   dom.gameOver.classList.add('overlay--hidden');
@@ -76,6 +78,7 @@ function showSetup() {
 }
 
 function showGameOver() {
+  keysDown.clear();
   dom.setupScreen.classList.add('overlay--hidden');
   dom.pauseOverlay.classList.add('overlay--hidden');
   dom.gameOver.classList.remove('overlay--hidden');
@@ -89,23 +92,58 @@ function showGameOver() {
 
 function startMatch() {
   const count = Number(dom.playerCount.value);
+  keysDown.clear();
   game.configure(count);
   game.beginPlay();
   dom.setupScreen.classList.add('overlay--hidden');
   dom.gameOver.classList.add('overlay--hidden');
   dom.pauseOverlay.classList.add('overlay--hidden');
   music.start();
+  // Keep keyboard focus on the page after clicking Start.
+  window.focus();
+  dom.canvas.focus({ preventScroll: true });
+}
+
+/** Sync held keys onto olive control flags every frame (robust vs missed keyups). */
+function applyHeldInput() {
+  if (game.phase !== 'playing' || game.paused) {
+    for (const olive of game.olives) {
+      olive.moveLeft = false;
+      olive.moveRight = false;
+      olive.aimUp = false;
+      olive.aimDown = false;
+    }
+    return;
+  }
+
+  for (const olive of game.olives) {
+    if (!olive.alive) {
+      olive.moveLeft = false;
+      olive.moveRight = false;
+      olive.aimUp = false;
+      olive.aimDown = false;
+      continue;
+    }
+    olive.moveLeft = keysDown.has(olive.keys.left);
+    olive.moveRight = keysDown.has(olive.keys.right);
+    olive.aimUp = keysDown.has(olive.keys.aimUp);
+    olive.aimDown = keysDown.has(olive.keys.aimDown);
+  }
 }
 
 function onKeyDown(event) {
   if (event.code === 'Space' || event.code.startsWith('Arrow')) {
     event.preventDefault();
   }
+
+  keysDown.add(event.code);
+
   if (event.repeat) return;
 
   if (game.phase === 'playing' && event.code === 'KeyP') {
     game.paused = !game.paused;
     dom.pauseOverlay.classList.toggle('overlay--hidden', !game.paused);
+    if (game.paused) keysDown.clear();
     return;
   }
 
@@ -113,26 +151,19 @@ function onKeyDown(event) {
 
   for (const olive of game.olives) {
     if (!olive.alive) continue;
-    if (event.code === olive.keys.left) olive.moveLeft = true;
-    if (event.code === olive.keys.right) olive.moveRight = true;
-    if (event.code === olive.keys.aimUp) olive.aimUp = true;
-    if (event.code === olive.keys.aimDown) olive.aimDown = true;
     if (event.code === olive.keys.shoot) game.tryShoot(olive);
   }
 }
 
 function onKeyUp(event) {
-  for (const olive of game.olives) {
-    if (event.code === olive.keys.left) olive.moveLeft = false;
-    if (event.code === olive.keys.right) olive.moveRight = false;
-    if (event.code === olive.keys.aimUp) olive.aimUp = false;
-    if (event.code === olive.keys.aimDown) olive.aimDown = false;
-  }
+  keysDown.delete(event.code);
 }
 
 function frame(timestamp) {
   const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.05);
   lastTimestamp = timestamp;
+
+  applyHeldInput();
 
   const prevPhase = game.phase;
   game.update(dt);
@@ -148,6 +179,7 @@ function frame(timestamp) {
 async function init() {
   dom.canvas.width = CANVAS_W;
   dom.canvas.height = CANVAS_H;
+  dom.canvas.tabIndex = 0; // allow focusing the canvas for keyboard play
 
   await loadSprites();
   renderControlHints();
@@ -159,9 +191,9 @@ async function init() {
 
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('blur', () => keysDown.clear());
 
   lastTimestamp = performance.now();
-  // Draw idle backdrop on setup
   drawFrame(ctx, game, sprites);
   rafId = requestAnimationFrame(frame);
 }
