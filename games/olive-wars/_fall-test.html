@@ -1,0 +1,14 @@
+<!doctype html>
+<pre id="out">loading</pre>
+<script type="module">
+import { Game } from './game.js?v=fall-arc4';
+const g = new Game();
+g.configure(1);
+g.beginPlay();
+g.veggies.push({ type:'tomato', x:180, y:60, w:56, h:36, vx:90, vy:0, falling:false, alive:true, points:1, fallTrail:[] });
+const v = g.veggies[0];
+v.falling = true; v.vy = -60; v.vx = Math.max(40, v.vx) + 55;
+const x0 = v.x;
+while (v.alive) g.update(1/60);
+document.getElementById('out').textContent = `DX=${(v.x-x0).toFixed(1)} LAND=${v.x.toFixed(1)} TRAIL=${(v.fallTrail||[]).length}`;
+</script>

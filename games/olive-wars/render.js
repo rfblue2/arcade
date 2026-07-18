@@ -5,7 +5,7 @@ import {
   GROUND_HEIGHT,
   aimRadians,
   muzzlePoint,
-} from './game.js?v=fall-arc4';
+} from './game.js?v=olive-tilt';
 
 export function createSpriteMap(images) {
   return images;
@@ -134,7 +134,7 @@ export function drawFrame(ctx, game, sprites) {
     if (game.phase === 'playing') {
       drawAimGuide(ctx, olive);
     }
-    drawSprite(ctx, sprites[olive.sprite], olive.x, olive.y, olive.w, olive.h, olive.facing);
+    drawOlive(ctx, sprites[olive.sprite], olive);
   }
 
   for (const e of game.explosions) {
@@ -167,6 +167,19 @@ export function drawFrame(ctx, game, sprites) {
     ctx.textAlign = 'left';
     ctx.fillText(`SCORE  ${game.score}`, 24, 36);
   }
+}
+
+/** Draw the olive leaning with its aim angle, pivoting around its base. */
+function drawOlive(ctx, img, olive) {
+  if (!img) return;
+  const ang = aimRadians(olive); // signed toward facing (+ = right)
+  const pivotX = olive.x + olive.w / 2;
+  const pivotY = olive.y + olive.h; // base on the ground
+  ctx.save();
+  ctx.translate(pivotX, pivotY);
+  ctx.rotate(ang);
+  ctx.drawImage(img, -olive.w / 2, -olive.h, olive.w, olive.h);
+  ctx.restore();
 }
 
 function drawPimento(ctx, img, p) {
