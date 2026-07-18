@@ -100,9 +100,10 @@ export function drawFrame(ctx, game, sprites) {
       ctx.save();
       const cx = v.x + v.w / 2;
       const cy = v.y + v.h / 2;
-      const tilt = Math.min(0.9, v.vy / 400);
+      // Tumbling forward: spin from horizontal speed + fall.
+      const tumble = (v.vx / 140) + Math.min(1.2, Math.max(0, v.vy) / 280);
       ctx.translate(cx, cy);
-      ctx.rotate(tilt);
+      ctx.rotate(tumble);
       ctx.drawImage(img, -v.w / 2, -v.h / 2, v.w, v.h);
       ctx.restore();
     } else {

@@ -51,7 +51,8 @@ const SHOOT_COOLDOWN = 0.32;
 /** Max tilt from straight-up (degrees). 45° plays better for leading flyers. */
 export const MAX_AIM_DEG = 45;
 const AIM_RATE_DEG = 90; // deg/sec while holding up/down
-const FALL_GRAVITY = 520;
+/** Softer than real gravity so downed veggies visibly glide forward. */
+const FALL_GRAVITY = 360;
 const EXPLOSION_LIFE = 0.55;
 const EXPLOSION_RADIUS = 48;
 const BASE_SPAWN = 1.35;
