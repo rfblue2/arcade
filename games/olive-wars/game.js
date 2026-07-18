@@ -51,8 +51,10 @@ const SHOOT_COOLDOWN = 0.32;
 /** Max tilt from straight-up (degrees). 45° plays better for leading flyers. */
 export const MAX_AIM_DEG = 45;
 const AIM_RATE_DEG = 90; // deg/sec while holding up/down
-/** Softer than real gravity so downed veggies visibly glide forward. */
-const FALL_GRAVITY = 360;
+/** Soft gravity so downed veggies spend time gliding forward. */
+const FALL_GRAVITY = 260;
+/** Extra push in flight direction on hit so the arc reads clearly. */
+const FALL_PUSH = 55;
 const EXPLOSION_LIFE = 0.55;
 const EXPLOSION_RADIUS = 48;
 const BASE_SPAWN = 1.35;
@@ -246,8 +248,7 @@ export class Game {
       if (!v.alive) continue;
       if (v.falling) {
         v.vy += FALL_GRAVITY * dt;
-        // Keep flying direction: glide forward while falling (light air drag).
-        v.vx *= 0.995;
+        // Full forward momentum — arc in the direction they were flying.
         v.x += v.vx * dt;
         v.y += v.vy * dt;
         if (v.y + v.h >= GROUND_Y) {
@@ -300,9 +301,8 @@ export class Game {
         const pad = 4;
         if (aabb(p.x, p.y, p.w, p.h, v.x + pad, v.y + pad, v.w - pad * 2, v.h - pad * 2)) {
           v.falling = true;
-          v.vy = 40;
-          // Keep most forward speed so the veggie arcs onward as it falls.
-          v.vx *= 0.9;
+          // Slight pop-up, then arc forward at full prior flight speed.
+          v.vy = -30;
           this.score += v.points;
           p._dead = true;
           break;
