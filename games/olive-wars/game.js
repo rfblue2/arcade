@@ -245,8 +245,10 @@ export class Game {
       if (!v.alive) continue;
       if (v.falling) {
         v.vy += FALL_GRAVITY * dt;
+        // Keep flying direction: glide forward while falling (light air drag).
+        v.vx *= 0.995;
+        v.x += v.vx * dt;
         v.y += v.vy * dt;
-        v.x += v.vx * 0.15 * dt;
         if (v.y + v.h >= GROUND_Y) {
           v.alive = false;
           const cx = v.x + v.w / 2;
@@ -298,7 +300,8 @@ export class Game {
         if (aabb(p.x, p.y, p.w, p.h, v.x + pad, v.y + pad, v.w - pad * 2, v.h - pad * 2)) {
           v.falling = true;
           v.vy = 40;
-          v.vx *= 0.25;
+          // Keep most forward speed so the veggie arcs onward as it falls.
+          v.vx *= 0.9;
           this.score += v.points;
           p._dead = true;
           break;

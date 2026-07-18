@@ -38,7 +38,7 @@ Aim tilts from **straight up (0°)** toward the olive's facing direction, capped
 - **Movement:** olives accelerate left/right with a max speed and stop at the canvas edges. They stay on the ground line.
 - **Aiming / shooting:** rate-limited pimentos launch along the aim vector (vx/vy from angle). Removed off-screen or on hit.
 - **Veggie spawn:** timed spawns from the left edge; type randomized; **altitude spans a wide band** (high sky to near-olive flyovers) so aiming matters; veggies fly on a **straight horizontal path** (no bobbing); speed varies; spawn rate and speed ramp gently with score/time.
-- **Collision:** AABB hitboxes (slightly inset from sprite bounds). Pimento↔flying veggie → down. Falling veggie↔ground → explosion. Explosion radius vs olive hitbox → game over.
+- **Collision:** AABB hitboxes (slightly inset from sprite bounds). Pimento↔flying veggie → down. Downed veggies keep most of their forward horizontal speed and arc to the ground (not a straight drop). Falling veggie↔ground → explosion. Explosion radius vs olive hitbox → game over.
 - **Scoring:** +1 per veggie successfully shot (credited when the shot connects).
 
 ## Visual Style
