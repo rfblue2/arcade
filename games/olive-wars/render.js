@@ -4,8 +4,7 @@ import {
   GROUND_Y,
   GROUND_HEIGHT,
   aimRadians,
-  muzzlePoint,
-} from './game.js?v=olive-tilt';
+} from './game.js?v=noguide';
 
 export function createSpriteMap(images) {
   return images;
@@ -131,9 +130,6 @@ export function drawFrame(ctx, game, sprites) {
 
   for (const olive of game.olives) {
     if (!olive.alive) continue;
-    if (game.phase === 'playing') {
-      drawAimGuide(ctx, olive);
-    }
     drawOlive(ctx, sprites[olive.sprite], olive);
   }
 
@@ -191,40 +187,6 @@ function drawPimento(ctx, img, p) {
   // Sprite points "up" by default; rotate by aim angle from vertical.
   ctx.rotate(p.angle || 0);
   ctx.drawImage(img, -p.w / 2, -p.h / 2, p.w, p.h);
-  ctx.restore();
-}
-
-function drawAimGuide(ctx, olive) {
-  const ang = aimRadians(olive);
-  const muzzle = muzzlePoint(olive);
-  const len = 54 + olive.aimDeg * 0.35;
-  const ex = muzzle.x + Math.sin(ang) * len;
-  const ey = muzzle.y - Math.cos(ang) * len;
-
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255, 80, 70, 0.75)';
-  ctx.fillStyle = 'rgba(255, 80, 70, 0.85)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 5]);
-  ctx.beginPath();
-  ctx.moveTo(muzzle.x, muzzle.y);
-  ctx.lineTo(ex, ey);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Arrow tip
-  ctx.beginPath();
-  ctx.arc(ex, ey, 3.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Tiny angle readout near olive when not straight up
-  if (olive.aimDeg > 0.5) {
-    ctx.font = 'bold 11px "Trebuchet MS", sans-serif';
-    ctx.fillStyle = 'rgba(40, 20, 10, 0.7)';
-    ctx.textAlign = 'center';
-    const label = `${Math.round(olive.aimDeg)}°`;
-    ctx.fillText(label, olive.x + olive.w / 2, olive.y - 6);
-  }
   ctx.restore();
 }
 

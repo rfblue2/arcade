@@ -1,6 +1,6 @@
-import { Game, PLAYER_DEFS, CANVAS_W, CANVAS_H } from './game.js?v=olive-tilt';
-import { drawFrame } from './render.js?v=olive-tilt';
-import { ChaseMusic } from './music.js?v=olive-tilt';
+import { Game, PLAYER_DEFS, CANVAS_W, CANVAS_H } from './game.js?v=noguide';
+import { drawFrame } from './render.js?v=noguide';
+import { ChaseMusic } from './music.js?v=noguide';
 
 const SPRITE_FILES = {
   olive_green: 'sprites/olive_green.png',

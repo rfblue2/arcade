@@ -30,7 +30,7 @@ Lobby → Setup → Playing → Game Over → Setup (Play Again)
 
 Pause: `P`.
 
-Aim tilts from **straight up (0°)** toward the olive's facing direction, capped at **45°** (chosen over 30° for easier leading of flyers). Hold up/down to adjust; a dashed aim guide shows the current trajectory, and the **olive sprite itself leans with the aim angle** (pivoting around its base).
+Aim tilts from **straight up (0°)** toward the olive's facing direction, capped at **45°** (chosen over 30° for easier leading of flyers). Hold up/down to adjust. There is **no on-screen aim line**; instead the **olive sprite leans with the aim angle** (pivoting around its base), and pimentos launch from the pimento in the olive's top hole along that lean.
 
 ## Mechanics Detail
 

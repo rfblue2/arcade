@@ -66,13 +66,15 @@ export function aimRadians(olive) {
 }
 
 export function muzzlePoint(olive) {
+  // Fire from the pimento in the olive's top hole. The olive pivots at its
+  // base and leans by the aim angle, so project up that same axis to the hole.
   const ang = aimRadians(olive);
-  const ox = olive.x + olive.w / 2;
-  const oy = olive.y + 8;
-  const len = olive.h * 0.35;
+  const baseX = olive.x + olive.w / 2;
+  const baseY = olive.y + olive.h;
+  const len = olive.h * 0.82;
   return {
-    x: ox + Math.sin(ang) * len,
-    y: oy - Math.cos(ang) * len,
+    x: baseX + Math.sin(ang) * len,
+    y: baseY - Math.cos(ang) * len,
   };
 }
 
