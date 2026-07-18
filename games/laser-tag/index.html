@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laser Tag — RFONG'S ARCADE</title>
+  <link rel="stylesheet" href="../../styles/arcade.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="back-link" href="../../index.html">← Arcade</a>
+
+  <div id="game-root">
+    <canvas id="game-canvas" width="576" height="384"></canvas>
+
+    <div id="setup-screen" class="overlay">
+      <div class="panel">
+        <h1 class="panel__title">LASER TAG</h1>
+        <p class="panel__subtitle">Last ship flying wins</p>
+
+        <label class="field">
+          <span class="field__label">Players</span>
+          <select id="player-count">
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+
+        <div id="player-slots" class="player-slots"></div>
+
+        <button id="start-btn" class="btn btn--primary" type="button">START</button>
+      </div>
+    </div>
+
+    <div id="countdown-overlay" class="overlay overlay--hidden">
+      <div id="countdown-text" class="countdown">3</div>
+    </div>
+
+    <div id="pause-overlay" class="overlay overlay--hidden">
+      <div class="countdown">PAUSED</div>
+    </div>
+
+    <div id="hud" class="hud overlay--hidden">
+      <div id="hud-players" class="hud__players"></div>
+    </div>
+
+    <div id="round-over" class="overlay overlay--hidden">
+      <div class="panel">
+        <h2 id="round-result" class="panel__title">ROUND OVER</h2>
+        <div id="scoreboard" class="scoreboard"></div>
+        <div class="btn-row">
+          <button id="next-round-btn" class="btn btn--primary" type="button">NEXT ROUND</button>
+          <button id="change-players-btn" class="btn" type="button">CHANGE PLAYERS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

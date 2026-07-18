@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  background: #06060c;
+  color: #e8e8f0;
+  line-height: 1.6;
+}
+
+a {
+  color: #33eeff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #88ffff;
+  text-shadow: 0 0 8px #33eeff;
+}
+
+.arcade-header {
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
+}
+
+.arcade-title {
+  margin: 0;
+  font-size: clamp(1rem, 3.5vw, 1.75rem);
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-shadow:
+    0 0 10px #ff44ff,
+    0 0 24px #3388ff,
+    0 0 40px #ff3355;
+}
+
+.arcade-subtitle {
+  margin: 1rem 0 0;
+  font-size: clamp(0.45rem, 1.5vw, 0.6rem);
+  color: #8888aa;
+}
+
+.arcade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+}
+
+.game-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 1.5rem 1rem;
+  border: 2px solid #2a2a44;
+  border-radius: 4px;
+  background: linear-gradient(160deg, #10101a 0%, #0a0a12 100%);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+a.game-card {
+  cursor: pointer;
+  color: inherit;
+}
+
+a.game-card:hover {
+  border-color: #33eeff;
+  box-shadow:
+    0 0 12px rgba(51, 238, 255, 0.35),
+    inset 0 0 20px rgba(51, 238, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+.game-card--soon {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.game-card__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(0.55rem, 2vw, 0.7rem);
+  text-align: center;
+}
+
+.game-card__badge {
+  font-size: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #33ff77;
+  color: #33ff77;
+  text-shadow: 0 0 6px #33ff77;
+}
+
+.game-card__badge--soon {
+  border-color: #666688;
+  color: #666688;
+  text-shadow: none;
+}
+
+.game-card__desc {
+  margin: 0.75rem 0 0;
+  font-size: 0.45rem;
+  color: #666688;
+  text-align: center;
+}
+
+.back-link {
+  display: inline-block;
+  margin: 1rem;
+  font-size: 0.55rem;
+}
