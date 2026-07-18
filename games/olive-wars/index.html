@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olive Wars — RFONG'S ARCADE</title>
+  <link rel="stylesheet" href="../../styles/arcade.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="back-link" href="../../index.html">← Arcade</a>
+
+  <div id="game-root">
+    <canvas id="game-canvas" width="720" height="480"></canvas>
+
+    <div id="setup-screen" class="overlay">
+      <div class="panel">
+        <h1 class="panel__title panel__title--olive">OLIVE WARS</h1>
+        <p class="panel__subtitle">Shoot veggies. Don't get smooshed.</p>
+
+        <label class="field">
+          <span class="field__label">Players</span>
+          <select id="player-count">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+          </select>
+        </label>
+
+        <div id="control-hints" class="control-hints"></div>
+
+        <p class="panel__hint">↑↓ aim (max 45°) · Space / F shoot · falling veggies explode!</p>
+        <button id="start-btn" class="btn btn--primary" type="button">START</button>
+      </div>
+    </div>
+
+    <div id="pause-overlay" class="overlay overlay--hidden">
+      <div class="countdown">PAUSED</div>
+    </div>
+
+    <div id="game-over" class="overlay overlay--hidden">
+      <div class="panel">
+        <h2 class="panel__title panel__title--danger">GAME OVER</h2>
+        <p id="game-over-msg" class="panel__subtitle">Splattered!</p>
+        <p class="final-score-label">VEGGIES DOWNED</p>
+        <p id="final-score" class="final-score">0</p>
+        <div class="btn-row">
+          <button id="play-again-btn" class="btn btn--primary" type="button">PLAY AGAIN</button>
+          <button id="change-players-btn" class="btn" type="button">CHANGE PLAYERS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js?v=noguide"></script>
+</body>
+</html>

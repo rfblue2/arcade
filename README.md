@@ -7,6 +7,7 @@ A collection of childhood arcade game remakes, playable in the browser and hoste
 | Game | Status | Play |
 |------|--------|------|
 | Laser Tag | Playable | `games/laser-tag/` |
+| Olive Wars | Playable | `games/olive-wars/` |
 
 More games coming soon.
 
@@ -30,12 +31,11 @@ arcade/
 ├── index.html           # Arcade lobby: lists and links to all games
 ├── styles/              # Shared retro styling
 ├── games/
-│   └── laser-tag/       # Each game is self-contained
-│       ├── index.html
-│       ├── game.js      # and other modules
-│       └── ...
+│   ├── laser-tag/       # Each game is self-contained
+│   └── olive-wars/
 └── docs/
-    └── laser-tag-design.md
+    ├── laser-tag-design.md
+    └── olive-wars-design.md
 ```
 
 ## Running Locally
