@@ -1,6 +1,6 @@
-import { Game, PLAYER_DEFS, CANVAS_W, CANVAS_H } from './game.js';
-import { drawFrame } from './render.js';
-import { ChaseMusic } from './music.js';
+import { Game, PLAYER_DEFS, CANVAS_W, CANVAS_H } from './game.js?v=fall-arc4';
+import { drawFrame } from './render.js?v=fall-arc4';
+import { ChaseMusic } from './music.js?v=fall-arc4';
 
 const SPRITE_FILES = {
   olive_green: 'sprites/olive_green.png',

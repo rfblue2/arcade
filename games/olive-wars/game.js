@@ -251,6 +251,9 @@ export class Game {
         // Full forward momentum — arc in the direction they were flying.
         v.x += v.vx * dt;
         v.y += v.vy * dt;
+        if (!v.fallTrail) v.fallTrail = [];
+        v.fallTrail.push({ x: v.x + v.w / 2, y: v.y + v.h / 2 });
+        if (v.fallTrail.length > 18) v.fallTrail.shift();
         if (v.y + v.h >= GROUND_Y) {
           v.alive = false;
           const cx = v.x + v.w / 2;
@@ -301,8 +304,10 @@ export class Game {
         const pad = 4;
         if (aabb(p.x, p.y, p.w, p.h, v.x + pad, v.y + pad, v.w - pad * 2, v.h - pad * 2)) {
           v.falling = true;
-          // Slight pop-up, then arc forward at full prior flight speed.
-          v.vy = -30;
+          // Pop up and boost forward so the glide is obvious (not a straight drop).
+          v.vy = -60;
+          v.vx = Math.max(40, v.vx) + FALL_PUSH;
+          v.fallTrail = [{ x: v.x + v.w / 2, y: v.y + v.h / 2 }];
           this.score += v.points;
           p._dead = true;
           break;

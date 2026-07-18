@@ -5,7 +5,7 @@ import {
   GROUND_HEIGHT,
   aimRadians,
   muzzlePoint,
-} from './game.js';
+} from './game.js?v=fall-arc4';
 
 export function createSpriteMap(images) {
   return images;
@@ -97,6 +97,20 @@ export function drawFrame(ctx, game, sprites) {
   for (const v of game.veggies) {
     const img = sprites[v.type];
     if (v.falling) {
+      // Motion streak so the forward arc is readable.
+      if (v.fallTrail && v.fallTrail.length > 1) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 160, 60, 0.55)';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(v.fallTrail[0].x, v.fallTrail[0].y);
+        for (let i = 1; i < v.fallTrail.length; i++) {
+          ctx.lineTo(v.fallTrail[i].x, v.fallTrail[i].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
       ctx.save();
       const cx = v.x + v.w / 2;
       const cy = v.y + v.h / 2;
